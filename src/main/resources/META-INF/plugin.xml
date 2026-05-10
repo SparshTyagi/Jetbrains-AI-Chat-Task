@@ -1,0 +1,63 @@
+<idea-plugin>
+    <id>com.repolens.ai</id>
+    <name>RepoLens AI</name>
+    <vendor>RepoLens</vendor>
+
+    <description><![CDATA[
+        <h2>RepoLens AI</h2>
+        <p>Understand code in context. Right-click any code to get AI-powered explanations
+        enriched with repository context.</p>
+    ]]></description>
+
+    <!-- Depends only on the base platform — works in all JetBrains IDEs -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <!-- Persistent settings for API configuration (model, base URL) -->
+        <applicationService
+            serviceImplementation="com.repolens.ai.settings.RepoLensSettings"/>
+
+        <!-- Settings UI under Settings → Tools → RepoLens AI -->
+        <applicationConfigurable
+            parentId="tools"
+            instance="com.repolens.ai.settings.RepoLensConfigurable"
+            id="com.repolens.ai.settings"
+            displayName="RepoLens AI"/>
+
+        <!-- Project-level analysis service with coroutine scope -->
+        <projectService
+            serviceImplementation="com.repolens.ai.service.RepoLensService"/>
+
+        <!-- Tool window for displaying analysis results -->
+        <toolWindow
+            id="RepoLens AI"
+            anchor="right"
+            factoryClass="com.repolens.ai.ui.RepoLensToolWindowFactory"
+            icon="AllIcons.Actions.Find"/>
+
+    </extensions>
+
+    <actions>
+        <!-- Primary action: explain selected code with AI -->
+        <action
+            id="RepoLens.ExplainCode"
+            class="com.repolens.ai.action.ExplainCodeAction"
+            text="Explain with RepoLens AI"
+            description="Analyze selected code with repository-aware AI explanations"
+            icon="AllIcons.Actions.Find">
+
+            <!-- Available in editor right-click menu -->
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+
+            <!-- Also available in the main Code menu -->
+            <add-to-group group-id="CodeMenu" anchor="last"/>
+
+            <!-- Keyboard shortcut: Ctrl+Shift+L (Alt+Shift+L on Mac) -->
+            <keyboard-shortcut
+                keymap="$default"
+                first-keystroke="ctrl shift L"/>
+        </action>
+    </actions>
+
+</idea-plugin>
